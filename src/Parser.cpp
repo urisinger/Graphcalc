@@ -9,9 +9,9 @@ Parser::Parser(string _text) {
 
 int Parser::tokenize() {
     stack<Token> stack;
-    char last_token_was_op = true;
+    bool last_token_was_op = true;
     for (int cur = 0; cur < text.size(); ++cur) {
-        char currentchar = text[cur];
+        unsigned char currentchar = text[cur];
 
         if (isdigit(currentchar)) {
             int startcur = cur;

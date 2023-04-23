@@ -13,10 +13,10 @@ struct Token {
     /*
     0: no oper
     */
-    char oper;
+    unsigned char oper;
     float val;
 
-    Token(char _oper, float _val) {
+    Token(unsigned char _oper, float _val) {
         oper = _oper;
         val = _val;
     }

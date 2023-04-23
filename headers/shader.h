@@ -4,6 +4,7 @@
 #include <stack>
 
 #include <glad.h>
+#include "Parser.h"
 
 struct vec2 {
 	float x;
@@ -27,7 +28,7 @@ public:
 	Shader(const std::string& vertexFilePath, const std::string& fragmentFilePath ,vec2 res);
 	~Shader();
 
-
+    void setevaluniform(std::queue<Token> postfix);
 	void setcamerauniform(vec2 res, vec2 zoom, vec2 offset);
 	void bind();
 	void unbind();
