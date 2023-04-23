@@ -3,7 +3,7 @@
 
 int main(void)
 {
-    Application App(2560,1440);
+    Application App(1920,1080);
     App.GameLoop();
     return 0;
 }

@@ -1,8 +1,9 @@
 #include <string>
 #include <iostream>
 #include <fstream>
+#include <stack>
 
-#include <GL/glew.h>
+#include <glad.h>
 
 struct vec2 {
 	float x;
@@ -27,7 +28,7 @@ public:
 	~Shader();
 
 
-	void SetUniform(vec2 res, vec2 zoom, vec2 offset);
+	void setcamerauniform(vec2 res, vec2 zoom, vec2 offset);
 	void bind();
 	void unbind();
 

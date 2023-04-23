@@ -1,5 +1,5 @@
 #pragma once
-#include <GL/glew.h>
+#include <glad.h>
 #include <GLFW/glfw3.h>
 #include <iostream>
 
@@ -7,19 +7,15 @@
 #include "vertexbuffer.h"
 #include "IndexBuffer.h"
 #include "shader.h"
+#include "Parser.h"
 
-static void GLclearerrors()
-{
-    while (glGetError());
-}
-
-static void GLCheckErrros()
-{
-    while (GLenum error = glGetError())
-    {
-        std::cout << "[opengl error](" << error << ")" << std::endl;
-    }
-}
+void MessageCallback( GLenum source,
+                 GLenum type,
+                 GLuint id,
+                 GLenum severity,
+                 GLsizei length,
+                 const GLchar* message,
+                 const void* userParam );
 
 
 class Application
@@ -31,12 +27,14 @@ public:
     void GameLoop();
     vec2 res;
     vec2 zoom;
-    vec2 offset;    
+    vec2 offset;
+
+    std::vector<Shader> _Shaders;
 
 private:
     GLFWwindow* _window;
 
-    std::vector<Shader> _Shaders;
+    Parser parser;
     std::vector <VertexBuffer> _VertexBuffers;
     std::vector <IndexBuffer> _IndexBuffers;
     unsigned int vao;

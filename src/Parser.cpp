@@ -28,12 +28,22 @@ int Parser::tokenize() {
             }
             last_token_was_op = false;
         }
+        else if(currentchar== '='){
+
+
+            while (!stack.empty() && stack.top().oper != '(') {
+                postfix.emplace(stack.top().oper, 0);
+                stack.pop();
+            }
+            stack.emplace('-',0);
+
+        }
         else if (currentchar == 'x' || currentchar == 'y') {
             postfix.emplace(currentchar, 0);
             last_token_was_op = false;
         }
         else {
-            if (last_token_was_op && currentchar != '(' && currentchar != ')')
+               if (last_token_was_op && currentchar != '(' && currentchar != ')')
                 return -1;
             if (currentchar == ')') {
                 while (!stack.empty() && stack.top().oper != '(') {
@@ -54,7 +64,7 @@ int Parser::tokenize() {
         }
     }
     while (!stack.empty()) {
-        postfix.emplace(stack.top().oper, stack.top().val);
+        postfix.emplace(stack.top().oper, 0);
         stack.pop();
     }
     return 0;

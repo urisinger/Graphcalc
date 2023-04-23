@@ -44,7 +44,7 @@ void Shader::unbind() {
 }
 
 
-void Shader::SetUniform(vec2 res,vec2 zoom, vec2 offset) {
+void Shader::setcamerauniform(vec2 res,vec2 zoom, vec2 offset) {
     location = glGetUniformLocation(Renderer_ID, "Screen_Size");
 
     glUniform2i(location, res.x, res.y);
