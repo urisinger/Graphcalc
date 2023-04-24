@@ -28,14 +28,14 @@ public:
 	Shader(const std::string& vertexFilePath, const std::string& fragmentFilePath ,vec2 res);
 	~Shader();
 
-    void setevaluniform(std::queue<Token> postfix);
-	void setcamerauniform(vec2 res, vec2 zoom, vec2 offset);
+    unsigned int GetID();
+	void SetCameraUniform(vec2 res, vec2 zoom, vec2 offset);
 	void bind();
 	void unbind();
 
 private:
 	unsigned int Renderer_ID;
-	unsigned int location;
+
 	unsigned int CompileShader(unsigned int type, const std::string& source);
 	std::string OpenShader(std::string filepath);
 };

@@ -23,6 +23,7 @@ Shader::Shader(const std::string& vertex_file_path, const std::string& fragment_
 
     glUseProgram(Renderer_ID);
 
+    unsigned int location;
     location = glGetUniformLocation(Renderer_ID, "Screen_Size");
 
     glUniform2f(location,res.x,res.y);
@@ -35,6 +36,9 @@ Shader::Shader(const std::string& vertex_file_path, const std::string& fragment_
     glUniform2f(location, 0.0, 0.0);
 }
 
+unsigned int Shader::GetID() {
+    return Renderer_ID;
+}
 void Shader::bind() {
     glUseProgram(Renderer_ID);
 }
@@ -44,7 +48,8 @@ void Shader::unbind() {
 }
 
 
-void Shader::setcamerauniform(vec2 res,vec2 zoom, vec2 offset) {
+void Shader::SetCameraUniform(vec2 res,vec2 zoom, vec2 offset) {
+    unsigned int location;
     location = glGetUniformLocation(Renderer_ID, "Screen_Size");
 
     glUniform2f(location, res.x, res.y);
@@ -55,32 +60,6 @@ void Shader::setcamerauniform(vec2 res,vec2 zoom, vec2 offset) {
     location = glGetUniformLocation(Renderer_ID, "offset");
 
     glUniform2f(location, offset.x, offset.y);
-}
-
-void Shader::setevaluniform(std::queue<Token> postfix){
-    float values[256];
-    int opers[256];
-    int location;
-
-    int size = postfix.size();
-    for(int cur = 0; cur < 256 && !postfix.empty(); cur++){
-
-        values[cur] = postfix.front().val;
-        opers[cur] = postfix.front().oper;
-        std::cout << opers[cur]<< ": " << postfix.front().val <<std::endl;
-        postfix.pop();
-    }
-
-    location = glGetUniformLocation(Renderer_ID, "size");
-    glUniform1i(location, size);
-
-    location = glGetUniformLocation(Renderer_ID, "values");
-    glUniform1fv(location, 256,values);
-
-    location = glGetUniformLocation(Renderer_ID, "opers");
-
-    glUniform1iv(location, 256,opers);
-
 }
 Shader::~Shader() {
     glDeleteProgram(Renderer_ID);

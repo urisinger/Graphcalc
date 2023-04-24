@@ -6,6 +6,7 @@
 #include <queue>
 #include <map>
 #include <math.h>
+#include <glad.h>
 
 using namespace std;
 
@@ -25,15 +26,17 @@ struct Token {
 class Parser {
 public:
     string text;
-    queue<Token> postfix;
-
     Parser(string _text);
+    Parser(string *_text);
+
+    void setuniforms(unsigned int Shader_ID);
 
     int tokenize();
 
     float eval(float x, float y);
 
 private:
+    queue<Token> _postfix;
     std::map<char, int> precedence = { {'+', 0}, {'-', 0}, {'*', 1}, {'/', 1}, {'^', 2}, {')', 3}, {'(', 3} };
 };
 

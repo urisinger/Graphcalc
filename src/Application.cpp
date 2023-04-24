@@ -31,7 +31,7 @@ Application::Application(int screen_X, int screen_Y)
     :res(screen_X, screen_Y),
     zoom(20.0,20.0),
     offset(0.0,0.0),
-    parser("1/x=y")
+     parser("1/x=y")
 {
     unsigned int indecies[6] = { 0,1,2,
                   0,1,3 };
@@ -72,7 +72,7 @@ void Application::GameLoop() {
     double currenttime=0;
     double timediff = 0;
     int counter = 0;
-    _Shaders[0].setevaluniform(parser.postfix);
+    parser.setuniforms(_Shaders[0].GetID());
     while (!glfwWindowShouldClose(_window)) {
         float vertcies[8] = { 1.0, 1.0,-1.0,-1.0,-1.0, 1.0, 1.0,-1.0 };
 
@@ -92,8 +92,6 @@ void Application::GameLoop() {
         /* Poll for and process events */
 
         glfwPollEvents();
-        
-
     }
 }
 

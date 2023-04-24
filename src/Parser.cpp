@@ -1,5 +1,12 @@
 #include "Parser.h"
 
+Parser::Parser(string *_text) {
+    text = *_text;
+    if (tokenize() == -1) {
+        cout << "Error: invalid input" << endl;
+    }
+}
+
 Parser::Parser(string _text) {
     text = _text;
     if (tokenize() == -1) {
@@ -7,6 +14,31 @@ Parser::Parser(string _text) {
     }
 }
 
+void Parser::setuniforms(unsigned int Shader_ID) {
+    queue<Token> postfix = _postfix;
+    float values[256];
+    int opers[256];
+    int location;
+
+    int size = postfix.size();
+    for(int cur = 0; cur < 256 && !postfix.empty(); cur++){
+
+        values[cur] = postfix.front().val;
+        opers[cur] = postfix.front().oper;
+        std::cout << opers[cur]<< ": " << postfix.front().val <<std::endl;
+        postfix.pop();
+    }
+
+    location = glGetUniformLocation(Shader_ID, "size");
+    glUniform1i(location, size);
+
+    location = glGetUniformLocation(Shader_ID, "values");
+    glUniform1fv(location, 256,values);
+
+    location = glGetUniformLocation(Shader_ID, "opers");
+
+    glUniform1iv(location, 256,opers);
+}
 int Parser::tokenize() {
     stack<Token> stack;
     bool last_token_was_op = true;
@@ -20,7 +52,7 @@ int Parser::tokenize() {
                 cur++;
             }
             if (cur - startcur > 0) {
-                postfix.emplace(0, atof(text.substr(startcur, cur - startcur).c_str()));
+                _postfix.emplace(0, atof(text.substr(startcur, cur - startcur).c_str()));
                 cur--; // decrement cur by 1 to re-check the current character
             }
             else {
@@ -32,14 +64,14 @@ int Parser::tokenize() {
 
 
             while (!stack.empty() && stack.top().oper != '(') {
-                postfix.emplace(stack.top().oper, 0);
+                _postfix.emplace(stack.top().oper, 0);
                 stack.pop();
             }
             stack.emplace('-',0);
 
         }
         else if (currentchar == 'x' || currentchar == 'y') {
-            postfix.emplace(currentchar, 0);
+            _postfix.emplace(currentchar, 0);
             last_token_was_op = false;
         }
         else {
@@ -47,14 +79,14 @@ int Parser::tokenize() {
                 return -1;
             if (currentchar == ')') {
                 while (!stack.empty() && stack.top().oper != '(') {
-                    postfix.emplace(stack.top().oper, 0);
+                    _postfix.emplace(stack.top().oper, 0);
                     stack.pop();
                 }
                 stack.pop();
             }
             else {
                 while (!stack.empty() && stack.top().oper != '(' && precedence[stack.top().oper] >= precedence[currentchar]) {
-                    postfix.emplace(stack.top().oper, 0);
+                    _postfix.emplace(stack.top().oper, 0);
                     stack.pop();
                 }
                 stack.emplace(currentchar, 0);
@@ -64,13 +96,14 @@ int Parser::tokenize() {
         }
     }
     while (!stack.empty()) {
-        postfix.emplace(stack.top().oper, 0);
+        _postfix.emplace(stack.top().oper, 0);
         stack.pop();
     }
     return 0;
 }
 
 float Parser::eval(float x, float y) {
+    queue<Token> postfix = _postfix;
     stack<float> stack;
     while (postfix.size() > 0) {
         Token* front = &postfix.front();
