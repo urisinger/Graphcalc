@@ -20,18 +20,17 @@ void scroll_callback(GLFWwindow* window, double xoffset, double yoffset) {
     application->zoom.x += yoffset * application->zoom.x / 5;
     application->zoom.y += yoffset * application->zoom.y / 5;
 
-    application->_Shaders[0].setcamerauniform(application->res,application->zoom,application->offset);
+    application->_Shaders[0].SetCameraUniform(application->res,application->zoom,application->offset);
 }
 
 void mouse_callback(GLFWwindow* window,int button, int action, int mods) {
-
 }
 
 Application::Application(int screen_X, int screen_Y)
     :res(screen_X, screen_Y),
     zoom(20.0,20.0),
     offset(0.0,0.0),
-     parser("1/x=y")
+     parser("x^5=y")
 {
     unsigned int indecies[6] = { 0,1,2,
                   0,1,3 };

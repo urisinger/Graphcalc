@@ -90,9 +90,9 @@ void main() {
     _color = mix(_color, vec3(0.4), step(abs(pos.x), 0.002 * zoom.x));
     _color = mix(_color, vec3(0.4), step(abs(pos.y), 0.0025 * zoom.y));
     vec2 grad = vec2(
-    (eval(pos + vec2(eps, 0)) - eval(pos - vec2(eps, 0))),
-    (eval(pos + vec2(0, eps)) - eval(pos - vec2(0, eps)))
-    ) / (2.0 * eps);
+    (eval(pos + vec2(eps/1000, 0)) - eval(pos - vec2(eps/1000, 0))),
+    (eval(pos + vec2(0, eps/1000)) - eval(pos - vec2(0, eps/1000)))
+    ) / (2.0 * eps/1000);
     eps *= length(grad);
     _color = mix(_color, GRAPHCOLOR, step(abs(eval(pos)), eps));
     color = vec4(_color, 0.9);
