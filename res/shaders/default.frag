@@ -40,16 +40,22 @@ float eval(vec2 pos) {
             }
             case 47: { // '/'
                 float temp = stack[top--];
-                temp = stack[top--] / temp;
-                stack[++top] = temp;
+                if (abs(temp) < 0.1) { // Check if denominator is close to zero
+                    stack[++top] = 1000000.0; // Return a large value
+                } else {
+                    temp = stack[top--]/temp;
+                    stack[++top] = temp;
+                }
                 break;
             }
             case 94: { // '^'
                 float temp = stack[top--];
-                temp = pow(stack[top--], temp);
-                stack[++top] = temp;
+                float base = stack[top--];
+                float exponent = temp * log((base));
+                stack[++top] = exp(exponent);
                 break;
             }
+
             case 120: { // 'x'
                 stack[++top] = pos.x;
                 break;

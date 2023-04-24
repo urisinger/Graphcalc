@@ -31,7 +31,7 @@ Application::Application(int screen_X, int screen_Y)
     :res(screen_X, screen_Y),
     zoom(20.0,20.0),
     offset(0.0,0.0),
-     parser("x^2=y")
+    parser("1/x=y")
 {
     unsigned int indecies[6] = { 0,1,2,
                   0,1,3 };
@@ -46,7 +46,7 @@ Application::Application(int screen_X, int screen_Y)
     /* Make the window's context current */
     glfwMakeContextCurrent(_window);
 
-    glfwSwapInterval(1);
+    glfwSwapInterval(0);
 
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
     {
