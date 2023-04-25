@@ -23,14 +23,13 @@ struct Token {
     }
 };
 
-class Parser {
+class Graph {
 public:
     string text;
-    Parser(string _text);
-    Parser(string *_text);
+    Graph(string _text);
+    Graph(string *_text);
 
     void setuniforms(unsigned int Shader_ID);
-
     int tokenize();
 
     float eval(float x, float y);

@@ -11,7 +11,6 @@ uniform int size;
 uniform vec2 Screen_Size;
 uniform vec2 zoom;
 uniform vec2 offset;
-#define GRAPHCOLOR vec3(0.176, 0.439, 0.701)
 
 float eval(vec2 pos) {
     float stack[256];
@@ -82,18 +81,7 @@ vec2 cameramat(vec2 pos) {
 }
 
 void main() {
-    float eps = (5.0*length(zoom)) / length(Screen_Size);
+
     vec2 pos = cameramat(2.0 * (gl_FragCoord.xy / Screen_Size) - vec2(1, 1));
-    vec3 _color = vec3(0.9, 0.9, 0.9);
-    _color = mix(_color, vec3(0.70), step(abs(pos.x - round(pos.x)), 0.001 * zoom.x));
-    _color = mix(_color, vec3(0.70), step(abs(pos.y - round(pos.y)), 0.001 * zoom.y));
-    _color = mix(_color, vec3(0.4), step(abs(pos.x), 0.002 * zoom.x));
-    _color = mix(_color, vec3(0.4), step(abs(pos.y), 0.0025 * zoom.y));
-    vec2 grad = vec2(
-    (eval(pos + vec2(eps/1000, 0)) - eval(pos - vec2(eps/1000, 0))),
-    (eval(pos + vec2(0, eps/1000)) - eval(pos - vec2(0, eps/1000)))
-    ) / (2.0 * eps/1000);
-    eps *= length(grad);
-    _color = mix(_color, GRAPHCOLOR, step(abs(eval(pos)), eps));
-    color = vec4(_color, 0.9);
+    color = vec4(step(eval(pos),0));
 }

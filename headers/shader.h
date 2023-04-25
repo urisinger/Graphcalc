@@ -32,6 +32,7 @@ public:
 	void SetCameraUniform(vec2 res, vec2 zoom, vec2 offset);
 	void bind();
 	void unbind();
+    void bindtexture(int index);
 
 private:
 	unsigned int Renderer_ID;

@@ -29,12 +29,15 @@ public:
     vec2 zoom;
     vec2 offset;
 
-    std::vector<Shader> _Shaders;
+    Shader *FirstPass;
+    Shader *SecondPass;
 
 private:
     GLFWwindow* _window;
 
-    Parser parser;
+    unsigned int FBO;
+    unsigned int TexID;
+    Graph parser;
     std::vector <VertexBuffer> _VertexBuffers;
     std::vector <IndexBuffer> _IndexBuffers;
     unsigned int vao;

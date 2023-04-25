@@ -20,7 +20,7 @@ void scroll_callback(GLFWwindow* window, double xoffset, double yoffset) {
     application->zoom.x += yoffset * application->zoom.x / 5;
     application->zoom.y += yoffset * application->zoom.y / 5;
 
-    application->_Shaders[0].SetCameraUniform(application->res,application->zoom,application->offset);
+    application->FirstPass->SetCameraUniform(application->res,application->zoom,application->offset);
 }
 
 void mouse_callback(GLFWwindow* window,int button, int action, int mods) {
@@ -30,7 +30,7 @@ Application::Application(int screen_X, int screen_Y)
     :res(screen_X, screen_Y),
     zoom(20.0,20.0),
     offset(0.0,0.0),
-     parser("x^5=y")
+     parser("1/x=y")
 {
     unsigned int indecies[6] = { 0,1,2,
                   0,1,3 };
@@ -58,11 +58,30 @@ Application::Application(int screen_X, int screen_Y)
     glfwSetWindowUserPointer(_window, this);
     glfwSetScrollCallback(_window, scroll_callback);
     glfwSetMouseButtonCallback(_window, mouse_callback);
+
+
     glCreateVertexArrays(1, &vao);
     glBindVertexArray(vao);
+
+    glGenFramebuffers(1,&FBO);
+    glBindFramebuffer(GL_FRAMEBUFFER,FBO);
+
+    glGenTextures(1, &TexID);
+    glBindTexture(GL_TEXTURE_2D,TexID);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glTexImage2D(GL_TEXTURE_2D,0,GL_RGB,res.x,res.y,0,GL_RGB,GL_UNSIGNED_BYTE,0);
+
+
+    glFramebufferTexture2D(GL_FRAMEBUFFER,GL_COLOR_ATTACHMENT0,GL_TEXTURE_2D,TexID,0);
+    glBindFramebuffer(GL_FRAMEBUFFER,0);
     _VertexBuffers.emplace_back();
-    _Shaders.emplace_back("../../res/shaders/default.vert", "../../res/shaders/default.frag",res);
     _IndexBuffers.emplace_back();
+    FirstPass = new Shader("../../res/shaders/Default.vert", "../../res/shaders/First.frag",res);
+    SecondPass = new Shader("../../res/shaders/Default.vert", "../../res/shaders/Second.frag",res);
+    SecondPass->bindtexture(0);
     _IndexBuffers[0].adddata(indecies, 6);
 }
 
@@ -71,7 +90,7 @@ void Application::GameLoop() {
     double currenttime=0;
     double timediff = 0;
     int counter = 0;
-    parser.setuniforms(_Shaders[0].GetID());
+    parser.setuniforms(FirstPass->GetID());
     while (!glfwWindowShouldClose(_window)) {
         float vertcies[8] = { 1.0, 1.0,-1.0,-1.0,-1.0, 1.0, 1.0,-1.0 };
 
@@ -96,17 +115,25 @@ void Application::GameLoop() {
 
 void Application::Draw(void* vertcies, int index, int count) {
 
-
-    glClear(GL_COLOR_BUFFER_BIT);
-    glClearColor(1, 0, 0, 1);
-    _Shaders[0].bind();
     _VertexBuffers[index].AddData(vertcies,count*2);
     
     _VertexBuffers[index].Bind();
     _IndexBuffers[index].Bind();
-
-
+  glBindFramebuffer(GL_FRAMEBUFFER,FBO);
+    FirstPass->bind();
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT,0);
-    _VertexBuffers[index].UnBind();
+
+    FirstPass->unbind();
+    glBindFramebuffer(GL_FRAMEBUFFER,0);
+
+     glClear(GL_COLOR_BUFFER_BIT);
+
+    SecondPass->bind();
+
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D,TexID);
+    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT,0);
+    glBindTexture(GL_TEXTURE_2D,0);
+   _VertexBuffers[index].UnBind();
 }
 

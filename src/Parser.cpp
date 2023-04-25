@@ -1,20 +1,21 @@
 #include "Parser.h"
 
-Parser::Parser(string *_text) {
+Graph::Graph(string *_text) {
     text = *_text;
     if (tokenize() == -1) {
         cout << "Error: invalid input" << endl;
     }
 }
 
-Parser::Parser(string _text) {
+Graph::Graph(string _text) {
     text = _text;
     if (tokenize() == -1) {
         cout << "Error: invalid input" << endl;
     }
 }
 
-void Parser::setuniforms(unsigned int Shader_ID) {
+void Graph::setuniforms(unsigned int Shader_ID) {
+    glUseProgram(Shader_ID);
     queue<Token> postfix = _postfix;
     float values[256];
     int opers[256];
@@ -38,8 +39,9 @@ void Parser::setuniforms(unsigned int Shader_ID) {
     location = glGetUniformLocation(Shader_ID, "opers");
 
     glUniform1iv(location, 256,opers);
+    glUseProgram(0);
 }
-int Parser::tokenize() {
+int Graph::tokenize() {
     stack<Token> stack;
     bool last_token_was_op = true;
     for (int cur = 0; cur < text.size(); ++cur) {
@@ -99,10 +101,11 @@ int Parser::tokenize() {
         _postfix.emplace(stack.top().oper, 0);
         stack.pop();
     }
+
     return 0;
 }
 
-float Parser::eval(float x, float y) {
+float Graph::eval(float x, float y) {
     queue<Token> postfix = _postfix;
     stack<float> stack;
     while (postfix.size() > 0) {

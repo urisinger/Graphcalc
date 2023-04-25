@@ -23,7 +23,7 @@ Shader::Shader(const std::string& vertex_file_path, const std::string& fragment_
 
     glUseProgram(Renderer_ID);
 
-    unsigned int location;
+    int location;
     location = glGetUniformLocation(Renderer_ID, "Screen_Size");
 
     glUniform2f(location,res.x,res.y);
@@ -34,6 +34,7 @@ Shader::Shader(const std::string& vertex_file_path, const std::string& fragment_
     location = glGetUniformLocation(Renderer_ID, "offset");
 
     glUniform2f(location, 0.0, 0.0);
+    unbind();
 }
 
 unsigned int Shader::GetID() {
@@ -47,9 +48,16 @@ void Shader::unbind() {
     glUseProgram(0);
 }
 
+void Shader::bindtexture(int index){
+    bind();
+    glUniform1i(glGetUniformLocation(Renderer_ID,"_texture"),index);
+    unbind();
+}
+
 
 void Shader::SetCameraUniform(vec2 res,vec2 zoom, vec2 offset) {
-    unsigned int location;
+    int location;
+    bind();
     location = glGetUniformLocation(Renderer_ID, "Screen_Size");
 
     glUniform2f(location, res.x, res.y);
@@ -60,7 +68,9 @@ void Shader::SetCameraUniform(vec2 res,vec2 zoom, vec2 offset) {
     location = glGetUniformLocation(Renderer_ID, "offset");
 
     glUniform2f(location, offset.x, offset.y);
+    unbind();
 }
+
 Shader::~Shader() {
     glDeleteProgram(Renderer_ID);
 }
