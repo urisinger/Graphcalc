@@ -62,24 +62,11 @@ Application::Application(int screen_X, int screen_Y)
     glCreateVertexArrays(1, &vao);
     glBindVertexArray(vao);
 
-    glGenFramebuffers(1,&FBO);
-    glBindFramebuffer(GL_FRAMEBUFFER,FBO);
-
-    glGenTextures(1, &TexID);
-    glBindTexture(GL_TEXTURE_2D,TexID);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-    glTexImage2D(GL_TEXTURE_2D,0,GL_RGB,res.x,res.y,0,GL_RGB,GL_UNSIGNED_BYTE,0);
-
-
-    glFramebufferTexture2D(GL_FRAMEBUFFER,GL_COLOR_ATTACHMENT0,GL_TEXTURE_2D,TexID,0);
-    glBindFramebuffer(GL_FRAMEBUFFER,0);
-    _VertexBuffers.emplace_back();
-    _IndexBuffers.emplace_back();
+    Mask = new FrameBuffer(res);
     FirstPass = new Shader("../../res/shaders/Default.vert", "../../res/shaders/First.frag",res);
     SecondPass = new Shader("../../res/shaders/Default.vert", "../../res/shaders/Second.frag",res);
+    _VertexBuffers.emplace_back();
+    _IndexBuffers.emplace_back();
     SecondPass->BindTexture(0);
     _IndexBuffers[0].AddData(indecies, 6);
 }
@@ -90,12 +77,12 @@ void Application::GameLoop() {
     double timediff = 0;
     int counter = 0;
     parser.SetText("x=y");
+    float vertcies[8] = { 1.0, 1.0,-1.0,-1.0,-1.0, 1.0, 1.0,-1.0 };
+    _VertexBuffers[0].AddData(vertcies,8*2);
+    parser.SetUniform(FirstPass->GetID());
     while (!glfwWindowShouldClose(_window)) {
-        parser.SetUniform(FirstPass->GetID());
-
-        float vertcies[8] = { 1.0, 1.0,-1.0,-1.0,-1.0, 1.0, 1.0,-1.0 };
-
-        Draw(vertcies);
+     //   parser.SetUniform(FirstPass->GetID());
+        Draw();
 
         currenttime = glfwGetTime();
         timediff = currenttime - prevtime;
@@ -114,25 +101,22 @@ void Application::GameLoop() {
     }
 }
 
-void Application::Draw(void* vertcies) {
-
-    _VertexBuffers[0].AddData(vertcies,8*2);
+void Application::Draw() {
     
     _VertexBuffers[0].Bind();
     _IndexBuffers[0].Bind();
-  glBindFramebuffer(GL_FRAMEBUFFER,FBO);
+    Mask->Bind();
     FirstPass->Bind();
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
 
     FirstPass->UnBind();
-    glBindFramebuffer(GL_FRAMEBUFFER,0);
-
+    Mask->UnBInd();
      glClear(GL_COLOR_BUFFER_BIT);
 
     SecondPass->Bind();
 
     glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D,TexID);
+    Mask->BindTexture();
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT,0);
     glBindTexture(GL_TEXTURE_2D,0);
    _VertexBuffers[0].UnBind();

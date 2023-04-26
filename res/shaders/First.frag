@@ -19,6 +19,10 @@ float eval(vec2 pos) {
     while (size_ < size) {
         int front_oper = opers[size_];
         switch (front_oper) {
+            case 115:{
+                stack[top] = sin(stack[top]);
+                break;
+            }
             case 43: { // '+'
                 float temp = stack[top--];
                 temp += stack[top--];
@@ -50,8 +54,15 @@ float eval(vec2 pos) {
             case 94: { // '^'
                 float temp = stack[top--];
                 float base = stack[top--];
-                float exponent = temp * log((base));
-                stack[++top] = exp(exponent);
+                if (base < 0.0 && abs(round(temp) - temp) < 0.001 ) { // Check if base is negative and exponent is fractional
+                    return -1; // Return NaN (not a number)
+                } else {
+                    float exponent = temp * log(abs(base));
+                    if (base < 0.0 && int(temp) % 2 == 1) { // Check if base is negative and exponent is odd
+                        exponent = -round(exponent); // Make result negative
+                    }
+                    stack[++top] = exp(exponent);
+                }
                 break;
             }
 

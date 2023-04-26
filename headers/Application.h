@@ -8,6 +8,7 @@
 #include "IndexBuffer.h"
 #include "shader.h"
 #include "Parser.h"
+#include "FrameBuffer.h"
 
 void MessageCallback( GLenum source,
                  GLenum type,
@@ -35,14 +36,13 @@ public:
 private:
     GLFWwindow* _window;
 
-    unsigned int FBO;
-    unsigned int TexID;
+    FrameBuffer *Mask;
     Graph parser;
     std::vector <VertexBuffer> _VertexBuffers;
     std::vector <IndexBuffer> _IndexBuffers;
     unsigned int vao;
 
     
-    void Draw(void* pos);
+    void Draw();
 };
 

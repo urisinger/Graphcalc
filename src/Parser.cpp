@@ -44,7 +44,7 @@ void Graph::SetUniform(unsigned int Shader_ID) {
     glUseProgram(0);
 }
 
-int Graph:: Tokenize() {
+int Graph::Tokenize() {
     std::stack<Token> stack;
     bool last_token_was_op = true;
     for (int cur = 0; cur < text.size(); ++cur) {
@@ -55,7 +55,7 @@ int Graph:: Tokenize() {
             bool isdot = false;
             while ((text[cur] >= '0' && text[cur] <= '9') || (!isdot && text[cur] == '.')) {
                 cur++;
-                if(text[cur]=='.'){
+                if (text[cur] == '.') {
                     isdot = true;
                 }
             }
@@ -68,22 +68,24 @@ int Graph:: Tokenize() {
             }
             last_token_was_op = false;
         }
-        else if(currentchar== '='){
-
-
+        else if (currentchar == '=') {
             while (!stack.empty() && stack.top().oper != '(') {
                 _postfix.emplace(stack.top().oper, 0);
                 stack.pop();
             }
-            stack.emplace('-',0);
-
+            stack.emplace('-', 0);
         }
         else if (currentchar == 'x' || currentchar == 'y') {
             _postfix.emplace(currentchar, 0);
             last_token_was_op = false;
         }
-        else if(currentchar!=' '){
-               if (last_token_was_op && currentchar != '(' && currentchar != ')')
+        else if (currentchar == 's' && cur + 2 < text.size() && text.substr(cur, 3) == "sin") {
+            stack.emplace('s', 0);
+            cur += 2; // skip "in" characters
+            last_token_was_op = true;
+        }
+        else if (currentchar != ' ') {
+            if (last_token_was_op && currentchar != '(' && currentchar != ')')
                 return -1;
             if (currentchar == ')') {
                 while (!stack.empty() && stack.top().oper != '(') {
