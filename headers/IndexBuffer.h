@@ -10,7 +10,7 @@ public:
 	IndexBuffer();
 	~IndexBuffer();
 	
-	void adddata(const unsigned int* data, unsigned int count);
+	void AddData(const unsigned int* data, unsigned int count);
 	void Bind() const;
 	void UnBind() const;
 

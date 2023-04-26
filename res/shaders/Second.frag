@@ -25,7 +25,7 @@ void main(){
 
     for(int i=-2;i<2;++i){
         for (int j =-2; j<2;j++){
-            if(texture(_texture, gl_FragCoord.xy/Screen_Size) != texture(_texture,(gl_FragCoord.xy+vec2(i,xj)) / Screen_Size)){
+            if(texture(_texture, gl_FragCoord.xy/Screen_Size) != texture(_texture,(gl_FragCoord.xy+vec2(i,j)) / Screen_Size)){
                 color = vec4(GRAPHCOLOR,1);
                 return;
             }

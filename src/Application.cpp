@@ -29,8 +29,7 @@ void mouse_callback(GLFWwindow* window,int button, int action, int mods) {
 Application::Application(int screen_X, int screen_Y)
     :res(screen_X, screen_Y),
     zoom(20.0,20.0),
-    offset(0.0,0.0),
-     parser("1/x=y")
+    offset(0.0,0.0)
 {
     unsigned int indecies[6] = { 0,1,2,
                   0,1,3 };
@@ -81,8 +80,8 @@ Application::Application(int screen_X, int screen_Y)
     _IndexBuffers.emplace_back();
     FirstPass = new Shader("../../res/shaders/Default.vert", "../../res/shaders/First.frag",res);
     SecondPass = new Shader("../../res/shaders/Default.vert", "../../res/shaders/Second.frag",res);
-    SecondPass->bindtexture(0);
-    _IndexBuffers[0].adddata(indecies, 6);
+    SecondPass->BindTexture(0);
+    _IndexBuffers[0].AddData(indecies, 6);
 }
 
 void Application::GameLoop() {
@@ -90,11 +89,13 @@ void Application::GameLoop() {
     double currenttime=0;
     double timediff = 0;
     int counter = 0;
-    parser.setuniforms(FirstPass->GetID());
+    parser.SetText("x=y");
     while (!glfwWindowShouldClose(_window)) {
+        parser.SetUniform(FirstPass->GetID());
+
         float vertcies[8] = { 1.0, 1.0,-1.0,-1.0,-1.0, 1.0, 1.0,-1.0 };
 
-        Draw(vertcies, 0, 8);
+        Draw(vertcies);
 
         currenttime = glfwGetTime();
         timediff = currenttime - prevtime;
@@ -113,27 +114,27 @@ void Application::GameLoop() {
     }
 }
 
-void Application::Draw(void* vertcies, int index, int count) {
+void Application::Draw(void* vertcies) {
 
-    _VertexBuffers[index].AddData(vertcies,count*2);
+    _VertexBuffers[0].AddData(vertcies,8*2);
     
-    _VertexBuffers[index].Bind();
-    _IndexBuffers[index].Bind();
+    _VertexBuffers[0].Bind();
+    _IndexBuffers[0].Bind();
   glBindFramebuffer(GL_FRAMEBUFFER,FBO);
-    FirstPass->bind();
-    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT,0);
+    FirstPass->Bind();
+    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
 
-    FirstPass->unbind();
+    FirstPass->UnBind();
     glBindFramebuffer(GL_FRAMEBUFFER,0);
 
      glClear(GL_COLOR_BUFFER_BIT);
 
-    SecondPass->bind();
+    SecondPass->Bind();
 
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D,TexID);
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT,0);
     glBindTexture(GL_TEXTURE_2D,0);
-   _VertexBuffers[index].UnBind();
+   _VertexBuffers[0].UnBind();
 }
 

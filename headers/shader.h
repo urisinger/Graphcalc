@@ -30,9 +30,9 @@ public:
 
     unsigned int GetID();
 	void SetCameraUniform(vec2 res, vec2 zoom, vec2 offset);
-	void bind();
-	void unbind();
-    void bindtexture(int index);
+	void Bind();
+	void UnBind();
+    void BindTexture(int index);
 
 private:
 	unsigned int Renderer_ID;

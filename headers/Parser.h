@@ -5,10 +5,8 @@
 #include <stack>
 #include <queue>
 #include <map>
-#include <math.h>
+#include <cmath>
 #include <glad.h>
-
-using namespace std;
 
 struct Token {
     /*
@@ -25,18 +23,20 @@ struct Token {
 
 class Graph {
 public:
-    string text;
-    Graph(string _text);
-    Graph(string *_text);
+    Graph(const std::string &_text);
+    Graph() = default;
 
-    void setuniforms(unsigned int Shader_ID);
-    int tokenize();
+    void SetUniform(unsigned int Shader_ID);
+    int Tokenize();
 
-    float eval(float x, float y);
+    void SetText(const std::string &_text);
+
+    float Eval(float x, float y);
 
 private:
-    queue<Token> _postfix;
-    std::map<char, int> precedence = { {'+', 0}, {'-', 0}, {'*', 1}, {'/', 1}, {'^', 2}, {')', 3}, {'(', 3} };
+    std::queue<Token> _postfix;
+    std::string text;
+    std::map<unsigned char, int> precedence = { {'+', 0}, {'-', 0}, {'*', 1}, {'/', 1}, {'^', 2}, {')', 3}, {'(', 3} };
 };
 
 

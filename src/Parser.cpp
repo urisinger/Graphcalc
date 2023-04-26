@@ -1,22 +1,24 @@
 #include "Parser.h"
 
-Graph::Graph(string *_text) {
-    text = *_text;
-    if (tokenize() == -1) {
-        cout << "Error: invalid input" << endl;
-    }
+
+Graph::Graph(const std::string& _text) {
+    SetText(_text);
 }
 
-Graph::Graph(string _text) {
+void Graph::SetText(const std::string& _text) {
     text = _text;
-    if (tokenize() == -1) {
-        cout << "Error: invalid input" << endl;
+
+    if(Tokenize()== -1){
+        std::cout << "Error: invalid input" << std::endl;
+        std::queue<Token> empty;
+        empty.emplace(0,-1);
+        _postfix = empty;
     }
 }
 
-void Graph::setuniforms(unsigned int Shader_ID) {
+void Graph::SetUniform(unsigned int Shader_ID) {
     glUseProgram(Shader_ID);
-    queue<Token> postfix = _postfix;
+    std::queue<Token> postfix = _postfix;
     float values[256];
     int opers[256];
     int location;
@@ -41,8 +43,9 @@ void Graph::setuniforms(unsigned int Shader_ID) {
     glUniform1iv(location, 256,opers);
     glUseProgram(0);
 }
-int Graph::tokenize() {
-    stack<Token> stack;
+
+int Graph:: Tokenize() {
+    std::stack<Token> stack;
     bool last_token_was_op = true;
     for (int cur = 0; cur < text.size(); ++cur) {
         unsigned char currentchar = text[cur];
@@ -52,6 +55,9 @@ int Graph::tokenize() {
             bool isdot = false;
             while ((text[cur] >= '0' && text[cur] <= '9') || (!isdot && text[cur] == '.')) {
                 cur++;
+                if(text[cur]=='.'){
+                    isdot = true;
+                }
             }
             if (cur - startcur > 0) {
                 _postfix.emplace(0, atof(text.substr(startcur, cur - startcur).c_str()));
@@ -76,7 +82,7 @@ int Graph::tokenize() {
             _postfix.emplace(currentchar, 0);
             last_token_was_op = false;
         }
-        else {
+        else if(currentchar!=' '){
                if (last_token_was_op && currentchar != '(' && currentchar != ')')
                 return -1;
             if (currentchar == ')') {
@@ -105,10 +111,10 @@ int Graph::tokenize() {
     return 0;
 }
 
-float Graph::eval(float x, float y) {
-    queue<Token> postfix = _postfix;
-    stack<float> stack;
-    while (postfix.size() > 0) {
+float Graph::Eval(float x, float y) {
+    std::queue<Token> postfix = _postfix;
+    std::stack<float> stack;
+    while (!postfix.empty()) {
         Token* front = &postfix.front();
         switch (front->oper) {
         case '+': {
