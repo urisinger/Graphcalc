@@ -20,17 +20,38 @@ void scroll_callback(GLFWwindow* window, double xoffset, double yoffset) {
     application->zoom.x += yoffset * application->zoom.x / 5;
     application->zoom.y += yoffset * application->zoom.y / 5;
 
-    application->FirstPass->SetCameraUniform(application->res,application->zoom,application->offset);
+    application->maskshader->SetCameraUniform(application->res,application->zoom,application->offset);
+    application->lineshader->SetCameraUniform(application->res,application->zoom,application->offset);
 }
 
 void mouse_callback(GLFWwindow* window,int button, int action, int mods) {
+
+    auto& io = ImGui::GetIO();
+    if (io.WantCaptureMouse) {
+        return;
+    }
+
+    auto application = static_cast<Application*>(glfwGetWindowUserPointer(window));
+
+
+    double xpos;
+    double ypos;
+
+    glfwGetCursorPos(window, &xpos, &ypos);
+    if(button==GLFW_MOUSE_BUTTON_LEFT && action==GLFW_PRESS){
+        application->lastpress = vec2((2*(xpos/application->res.x)-1)*application->zoom.x+application->offset.x,-(2*(ypos/application->res.y)-1)*application->zoom.y+application->offset.y);
+    }
 }
 
 Application::Application(int screen_X, int screen_Y)
     :res(screen_X, screen_Y),
-    zoom(20.0,20.0),
-    offset(0.0,0.0)
+    zoom(5.0,5.0),
+    offset(0.0,0.0),
+     lastpress(0,0)
 {
+
+    float vertcies[8] = { 1.0, 1.0,-1.0,-1.0,-1.0, 1.0, 1.0,-1.0 };
+
     unsigned int indecies[6] = { 0,1,2,
                   0,1,3 };
     /* Initialize the library */
@@ -44,7 +65,7 @@ Application::Application(int screen_X, int screen_Y)
     /* Make the window's context current */
     glfwMakeContextCurrent(_window);
 
-    glfwSwapInterval(0);
+    glfwSwapInterval(1);
 
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
     {
@@ -62,13 +83,23 @@ Application::Application(int screen_X, int screen_Y)
     glCreateVertexArrays(1, &vao);
     glBindVertexArray(vao);
 
+
     Mask = new FrameBuffer(res);
-    FirstPass = new Shader("../../res/shaders/Default.vert", "../../res/shaders/First.frag",res);
-    SecondPass = new Shader("../../res/shaders/Default.vert", "../../res/shaders/Second.frag",res);
+    maskshader = new Shader("../dependencies/shaders/Default.vert", "../dependencies/shaders/First.frag",res);
+    lineshader = new Shader("../dependencies/shaders/Default.vert", "../dependencies/shaders/Second.frag",res);
     _VertexBuffers.emplace_back();
     _IndexBuffers.emplace_back();
-    SecondPass->BindTexture(0);
+    lineshader->BindTexture(0);
+    _VertexBuffers[0].AddData(vertcies,8*2);
     _IndexBuffers[0].AddData(indecies, 6);
+
+    IMGUI_CHECKVERSION();
+    ImGui::CreateContext();
+    ImGuiIO& io = ImGui::GetIO(); (void)io;
+    ImGui_ImplGlfw_InitForOpenGL(_window, true);
+    ImGui_ImplOpenGL3_Init("#version 330");
+    io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
+    input[0]='\0';
 }
 
 void Application::GameLoop() {
@@ -76,12 +107,23 @@ void Application::GameLoop() {
     double currenttime=0;
     double timediff = 0;
     int counter = 0;
-    parser.SetText("x=y");
-    float vertcies[8] = { 1.0, 1.0,-1.0,-1.0,-1.0, 1.0, 1.0,-1.0 };
-    _VertexBuffers[0].AddData(vertcies,8*2);
-    parser.SetUniform(FirstPass->GetID());
+    parser.SetText("0");
+    parser.SetUniform(maskshader->GetID());
+    double xpos;
+    double ypos;
     while (!glfwWindowShouldClose(_window)) {
-     //   parser.SetUniform(FirstPass->GetID());
+        auto& io = ImGui::GetIO();
+        if(glfwGetMouseButton(_window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS && !(io.WantCaptureMouse)) {
+            glfwGetCursorPos(_window, &xpos, &ypos);
+            offset.x += lastpress.x - ((2 * (xpos / res.x) - 1) * zoom.x + offset.x);
+            offset.y += lastpress.y - (-(2 * (ypos / res.y) - 1) * zoom.y + offset.y);
+
+            maskshader->SetCameraUniform(res, zoom, offset);
+            lineshader->SetCameraUniform(res, zoom, offset);
+        }
+
+
+
         Draw();
 
         currenttime = glfwGetTime();
@@ -106,19 +148,31 @@ void Application::Draw() {
     _VertexBuffers[0].Bind();
     _IndexBuffers[0].Bind();
     Mask->Bind();
-    FirstPass->Bind();
+    maskshader->Bind();
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
 
-    FirstPass->UnBind();
+    maskshader->UnBind();
     Mask->UnBInd();
      glClear(GL_COLOR_BUFFER_BIT);
 
-    SecondPass->Bind();
+    lineshader->Bind();
 
     glActiveTexture(GL_TEXTURE0);
     Mask->BindTexture();
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT,0);
     glBindTexture(GL_TEXTURE_2D,0);
    _VertexBuffers[0].UnBind();
+
+   ImGui_ImplOpenGL3_NewFrame();
+    ImGui_ImplGlfw_NewFrame();
+    ImGui::NewFrame();
+
+    ImGui::Begin("Gui");
+
+    ImGui::InputText("your function", input, 256);
+    ImGui::End();
+
+    ImGui::Render();
+    ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 }
 

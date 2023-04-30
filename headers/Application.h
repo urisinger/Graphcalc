@@ -2,6 +2,9 @@
 #include <glad.h>
 #include <GLFW/glfw3.h>
 #include <iostream>
+#include <imgui.h>
+#include "imgui_impl_glfw.h"
+#include "imgui_impl_opengl3.h"
 
 #include <vector>
 #include "vertexbuffer.h"
@@ -30,8 +33,11 @@ public:
     vec2 zoom;
     vec2 offset;
 
-    Shader *FirstPass;
-    Shader *SecondPass;
+    vec2 lastpress;
+
+    Shader *maskshader;
+    Shader *lineshader;
+    char input[256];
 
 private:
     GLFWwindow* _window;
@@ -42,7 +48,8 @@ private:
     std::vector <IndexBuffer> _IndexBuffers;
     unsigned int vao;
 
-    
+    bool test=true;
+
     void Draw();
 };
 

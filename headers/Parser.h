@@ -36,7 +36,7 @@ public:
 private:
     std::queue<Token> _postfix;
     std::string text;
-    std::map<unsigned char, int> precedence = { {'+', 0}, {'-', 0}, {'*', 1}, {'/', 1}, {'^', 2},{'s',2} , {')', 3}, {'(', 3} };
+    std::map<unsigned char, int> precedence = { {'+', 0}, {'-', 0}, {'*', 1}, {'/', 1}, {'%',1},{'^', 2},{'s',2} , {')', 3}, {'(', 3} };
 };
 
 

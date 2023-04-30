@@ -8,7 +8,7 @@ Graph::Graph(const std::string& _text) {
 void Graph::SetText(const std::string& _text) {
     text = _text;
 
-    if(Tokenize()== -1){
+    if(Tokenize() == -1){
         std::cout << "Error: invalid input" << std::endl;
         std::queue<Token> empty;
         empty.emplace(0,-1);
@@ -28,7 +28,7 @@ void Graph::SetUniform(unsigned int Shader_ID) {
 
         values[cur] = postfix.front().val;
         opers[cur] = postfix.front().oper;
-        std::cout << opers[cur]<< ": " << postfix.front().val <<std::endl;
+        std::cout << postfix.front().oper << ": " << postfix.front().val <<std::endl;
         postfix.pop();
     }
 
@@ -54,10 +54,10 @@ int Graph::Tokenize() {
             int startcur = cur;
             bool isdot = false;
             while ((text[cur] >= '0' && text[cur] <= '9') || (!isdot && text[cur] == '.')) {
-                cur++;
                 if (text[cur] == '.') {
                     isdot = true;
                 }
+                cur++;
             }
             if (cur - startcur > 0) {
                 _postfix.emplace(0, atof(text.substr(startcur, cur - startcur).c_str()));
@@ -69,11 +69,12 @@ int Graph::Tokenize() {
             last_token_was_op = false;
         }
         else if (currentchar == '=') {
-            while (!stack.empty() && stack.top().oper != '(') {
+            while (!stack.empty()) {
                 _postfix.emplace(stack.top().oper, 0);
                 stack.pop();
             }
             stack.emplace('-', 0);
+            stack.emplace('(',0);
         }
         else if (currentchar == 'x' || currentchar == 'y') {
             _postfix.emplace(currentchar, 0);
@@ -105,6 +106,16 @@ int Graph::Tokenize() {
             }
         }
     }
+
+    while (!stack.empty() && stack.top().oper != '(') {
+        _postfix.emplace(stack.top().oper, 0);
+        stack.pop();
+    }
+
+    if(!stack.empty()){
+    stack.pop();
+    }
+
     while (!stack.empty()) {
         _postfix.emplace(stack.top().oper, 0);
         stack.pop();
