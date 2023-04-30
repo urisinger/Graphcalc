@@ -1,0 +1,3 @@
+/home/uri_singer/Desktop/dev/Graphcalc_cmake/build/Release/CMakeFiles/Graphcalc_cmake.dir
+/home/uri_singer/Desktop/dev/Graphcalc_cmake/build/Release/CMakeFiles/edit_cache.dir
+/home/uri_singer/Desktop/dev/Graphcalc_cmake/build/Release/CMakeFiles/rebuild_cache.dir
