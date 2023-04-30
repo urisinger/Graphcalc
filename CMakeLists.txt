@@ -3,12 +3,7 @@ project(Graphcalc_cmake)
 
 set(CMAKE_CXX_STANDARD 17)
 
-
-if(CMAKE_BUILD_TYPE STREQUAL "Release" AND WIN32)
-    set_property(TARGET main PROPERTY WIN32_EXECUTABLE true)
-elseif(CMAKE_BUILD_TYPE STREQUAL "Release")
-    set(SUBSYSTEM_LINKER_OPTIONS "-mwindows")
-endif()
+    
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/headers ${CMAKE_CURRENT_SOURCE_DIR}/libs/includes)
 
