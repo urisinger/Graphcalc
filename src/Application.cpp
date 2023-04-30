@@ -1,6 +1,5 @@
 #include "Application.h"
 
-
 void MessageCallback( GLenum source,
                            GLenum type,
                            GLuint id,
@@ -8,11 +7,23 @@ void MessageCallback( GLenum source,
                            GLsizei length,
                            const GLchar* message,
                            const void* userParam ){
-fprintf( stderr, "GL CALLBACK: %s type = 0x%x, severity = 0x%x, message = %s\n",
+    fprintf( stderr, "GL CALLBACK: %s type = 0x%x, severity = 0x%x, message = %s\n",
 ( type == GL_DEBUG_TYPE_ERROR ? "** GL ERROR **" : "" ),
 type, severity, message );
 }
 
+int TextInputCallback(ImGuiInputTextCallbackData* data)
+{
+    // Check if the text has been modified
+    if (data->EventFlag == ImGuiInputTextFlags_CallbackEdit)
+    {
+        // The text has been modified
+        // Do something here, e.g. update a flag
+        return 1;
+    }
+
+    return 0;
+}
 
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset) {
     Application* application = static_cast<Application*>(glfwGetWindowUserPointer(window));
@@ -74,6 +85,7 @@ Application::Application(int screen_X, int screen_Y)
     }
 
     glEnable( GL_DEBUG_OUTPUT );
+    glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
     glDebugMessageCallback( MessageCallback, 0 );
     glfwSetWindowUserPointer(_window, this);
     glfwSetScrollCallback(_window, scroll_callback);
@@ -169,7 +181,10 @@ void Application::Draw() {
 
     ImGui::Begin("Gui");
 
-    ImGui::InputText("your function", input, 256);
+    if (ImGui::InputText("", input, 256, ImGuiInputTextFlags_CallbackEdit, TextInputCallback)) {
+        parser.SetText(input);
+        parser.SetUniform(maskshader->GetID());
+    }
     ImGui::End();
 
     ImGui::Render();

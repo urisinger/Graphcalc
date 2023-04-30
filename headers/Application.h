@@ -39,11 +39,13 @@ public:
     Shader *lineshader;
     char input[256];
 
+    Graph parser;
+
 private:
     GLFWwindow* _window;
 
     FrameBuffer *Mask;
-    Graph parser;
+
     std::vector <VertexBuffer> _VertexBuffers;
     std::vector <IndexBuffer> _IndexBuffers;
     unsigned int vao;

@@ -46,6 +46,8 @@ void Graph::SetUniform(unsigned int Shader_ID) {
 
 int Graph::Tokenize() {
     std::stack<Token> stack;
+    std::queue<Token> empty;
+    _postfix = empty;
     bool last_token_was_op = true;
     for (int cur = 0; cur < text.size(); ++cur) {
         unsigned char currentchar = text[cur];
