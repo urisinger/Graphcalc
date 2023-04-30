@@ -73,7 +73,7 @@ Application::Application(int screen_X, int screen_Y)
         exit (-1);
     }
 
-    glEnable              ( GL_DEBUG_OUTPUT );
+    glEnable( GL_DEBUG_OUTPUT );
     glDebugMessageCallback( MessageCallback, 0 );
     glfwSetWindowUserPointer(_window, this);
     glfwSetScrollCallback(_window, scroll_callback);

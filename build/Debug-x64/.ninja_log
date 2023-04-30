@@ -1,0 +1,17 @@
+# ninja log v5
+15	242	7045679758679567	CMakeFiles/Graphcalc_cmake.dir/src/IndexBuffer.cpp.obj	f2d88113a691cef8
+33	1598	7045679772249971	CMakeFiles/Graphcalc_cmake.dir/src/shader.cpp.obj	4d373083ce486e36
+70	761	7045679763759442	CMakeFiles/Graphcalc_cmake.dir/libs/imgui/imgui_demo.cpp.obj	c98e869f1eb05f14
+56	1657	7045679772559965	CMakeFiles/Graphcalc_cmake.dir/src/FrameBuffer.cpp.obj	c51ea6f8df1323ae
+244	1108	7045679767429468	CMakeFiles/Graphcalc_cmake.dir/libs/imgui/imgui_draw.cpp.obj	da565c4e8454f791
+48	1461	7045679770679956	CMakeFiles/Graphcalc_cmake.dir/libs/glad/glad.c.obj	9881c0f13e1e47a7
+28	1410	7045679770199467	CMakeFiles/Graphcalc_cmake.dir/src/VertexBuffer.cpp.obj	8e58c1e238ecf9c6
+1108	1549	7045679771769990	CMakeFiles/Graphcalc_cmake.dir/libs/imgui/imgui_impl_opengl3.cpp.obj	997a93e41a74bf1c
+20	1696	7045679773309960	CMakeFiles/Graphcalc_cmake.dir/src/Parser.cpp.obj	636b55df320a993c
+9	1698	7045679773350047	CMakeFiles/Graphcalc_cmake.dir/src/Main.cpp.obj	651a76db3bb313b2
+63	1858	7045679774949939	CMakeFiles/Graphcalc_cmake.dir/libs/imgui/imgui.cpp.obj	9ac0e28a5c88ac57
+40	1864	7045679775049956	CMakeFiles/Graphcalc_cmake.dir/src/Application.cpp.obj	fe1c8ebe8e92705
+1410	2029	7045679776709958	CMakeFiles/Graphcalc_cmake.dir/libs/imgui/imgui_tables.cpp.obj	cf96a301a991d3a7
+762	2174	7045679778149987	CMakeFiles/Graphcalc_cmake.dir/libs/imgui/imgui_impl_glfw.cpp.obj	8477a0e5ae106618
+1461	2224	7045679778669916	CMakeFiles/Graphcalc_cmake.dir/libs/imgui/imgui_widgets.cpp.obj	329ccb5a8dd5de08
+2224	2693	7045679783145776	Graphcalc_cmake.exe	2695b13f368db328

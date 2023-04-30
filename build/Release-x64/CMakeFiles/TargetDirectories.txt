@@ -1,0 +1,3 @@
+C:/dev/Graphcalc_cmake/Graphcalc_cmake/build/Release-x64/CMakeFiles/Graphcalc_cmake.dir
+C:/dev/Graphcalc_cmake/Graphcalc_cmake/build/Release-x64/CMakeFiles/edit_cache.dir
+C:/dev/Graphcalc_cmake/Graphcalc_cmake/build/Release-x64/CMakeFiles/rebuild_cache.dir
